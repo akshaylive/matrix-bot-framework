@@ -1,13 +1,13 @@
-export enum EventType {
+export enum MatrixEventType {
     MESSAGE = 'MESSAGE',
     TYPING = 'TYPING',
     MEMBERSHIP = 'MEMBERSHIP',
 }
 
-export interface Event {
-    type: EventType
+export interface MatrixEvent {
+    type: MatrixEventType
 }
 
-export interface EventResponse {
+export interface MatrixEventResponse {
 
 }

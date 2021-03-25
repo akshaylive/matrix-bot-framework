@@ -1,17 +1,15 @@
-import { MatrixBotClient, MatrixBotEventHandler } from "../client";
-import { BotInterface } from "./botInterface";
-import { EventType, Event } from "../model";
+import { MatrixEventListener } from "../client";
+import { Bot } from "./bot";
+import { MatrixEvent } from "../model";
 
-export class EventHandler implements MatrixBotEventHandler {
+export class EventHandler implements MatrixEventListener {
     constructor(
-        private readonly client: MatrixBotClient,
-        private readonly handlers: BotInterface[],
+        private readonly handlers: Bot[],
     ) {
         console.log(`Registering handlers ${handlers}`);
-       client.addEventListener(this);
     }
 
-    public handle(event: Event): void {
-        console.log(`Event received: ${event}`);
+    public async handle(event: MatrixEvent): Promise<void> {
+        this.handlers.forEach(handler => handler.handle(event));
     }
 }
