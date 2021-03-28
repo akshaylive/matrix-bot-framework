@@ -1,11 +1,11 @@
 import sdk from "matrix-js-sdk";
-import { Context, ServerContext } from "./";
+import { Context, ServerContext, RequestContext } from "./";
 import { MatrixBotClient } from "../client";
 import { config } from "../config";
 import { EventHandler } from "../framework/eventHandler";
 import { Bot } from "../framework/bot";
-import { MatrixEventResponse } from "../model";
-import { BasicBot } from "../framework/bots/basicBot";
+import { AutoAcceptBot } from "../framework/bots/autoAcceptBot";
+import { v4 } from "uuid";
 
 export interface ContextGenerator<T extends Context> {
     getContext(): T;
@@ -14,15 +14,29 @@ export interface ContextGenerator<T extends Context> {
 export class ServerContextGenerator implements ContextGenerator<ServerContext> {
     getContext(): ServerContext {
         const bots: Bot[] = [
-            new BasicBot()
+            new AutoAcceptBot()
         ];
         const matrixClient = sdk.createClient({
             baseUrl: config.matrix.baseUrl,
             userId: config.matrix.userId,
             accessToken: config.matrix.accessToken
         });
-        const matrixBotClient = new MatrixBotClient(matrixClient);
         const eventHandler = new EventHandler(bots);
-        return { matrixBotClient, eventHandler } as ServerContext;
+        const serverContext = { eventHandler, matrixBotClient: undefined, config } as ServerContext;
+        const requestContextGenerator = new RequestContextGenerator(serverContext);
+        const matrixBotClient = new MatrixBotClient(matrixClient, requestContextGenerator);
+        serverContext.matrixBotClient = matrixBotClient;
+        return serverContext;
+    }
+}
+export class RequestContextGenerator implements ContextGenerator<RequestContext> {
+    constructor(private readonly serverContext: ServerContext) { }
+
+    getContext(): RequestContext {
+        return {
+            requestId: v4(),
+            serverContext: this.serverContext,
+            timestamp: new Date(),
+        };
     }
 }

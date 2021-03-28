@@ -1,7 +1,5 @@
 import { ServerContextGenerator } from "./context/contextGenerator";
 import { ServerContext } from "./context";
-import { EventHandler } from "./framework/eventHandler";
-import { MatrixEventType } from "./model";
 
 console.log('Hello, world.');
 
