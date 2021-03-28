@@ -6,6 +6,7 @@ import { EventHandler } from "../framework/eventHandler";
 import { Bot } from "../framework/bot";
 import { AutoAcceptBot } from "../framework/bots/autoAcceptBot";
 import { v4 } from "uuid";
+import { MessageBot } from "../framework/bots/messageBot";
 
 export interface ContextGenerator<T extends Context> {
     getContext(): T;
@@ -14,7 +15,8 @@ export interface ContextGenerator<T extends Context> {
 export class ServerContextGenerator implements ContextGenerator<ServerContext> {
     getContext(): ServerContext {
         const bots: Bot[] = [
-            new AutoAcceptBot()
+            new AutoAcceptBot(),
+            new MessageBot(),
         ];
         const matrixClient = sdk.createClient({
             baseUrl: config.matrix.baseUrl,

@@ -31,6 +31,18 @@ export class MatrixBotClient {
         });
     }
 
+    public async sendMessage(roomId: string, message: string) {
+        const content = {
+            body: message,
+            msgtype: "m.text"
+        };
+        await this.matrixClient.sendEvent(
+            roomId,
+            "m.room.message",
+            content, ""
+        );
+    }
+
     public async initialize() {
         await this.matrixClient.startClient({initialSyncLimit: 0});
     }
